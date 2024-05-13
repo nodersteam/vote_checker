@@ -5,12 +5,12 @@ from dateutil.parser import isoparse
 import requests
 import schedule
 import time
+from config import CHAT_ID_MAINNET, CHAT_ID_TESTNET
 from telegram_utils import send_telegram_message
 from api_test import test_api_connection
 
 next_check_time = None
 interval = None
-
 
 def check_active_votes():
     global next_check_time, interval
@@ -27,6 +27,7 @@ def check_active_votes():
     for project_info in projects:
         project_api = project_info['project_api']
         project_wallet = project_info['wallet_address']
+        network_type = project_info['network_type']
 
         project_votes_found = False
         for api_version in ['v1beta1', 'v1']:
@@ -40,35 +41,36 @@ def check_active_votes():
                         continue
                     print(f"\nАктивные голоса для {project_info['project_name']}:\n")
                     project_votes_found = True
-                    with open(f"{project_info['project_name']}.txt", 'w') as f:
-                        f.write(f"Активные голоса для {project_info['project_name']}:\n")
-                        for proposal in active_proposals:
-                            proposal_id = proposal.get('proposal_id')
-                            for api_version_vote in ['v1beta1', 'v1']:
-                                vote_url = f'{project_api}/cosmos/gov/{api_version_vote}/proposals/{proposal_id}/votes/{project_wallet}'
-                                vote_response = requests.get(vote_url)
-                                if vote_response.status_code == 200:
-                                    break
-                            voted = "Yes" if vote_response.status_code == 200 else "No"
-                            title = proposal.get('content', {}).get('title')
-                            start_time = isoparse(proposal.get('voting_start_time')).strftime('%d %B %Y, %H:%M')
-                            end_time = isoparse(proposal.get('voting_end_time')).strftime('%d %B %Y, %H:%M')
-                            f.write(f"\nProposal ID: {proposal_id}")
-                            f.write(f"\nTitle: {title}")
-                            f.write(f"\nVoting Start Time: {start_time}")
-                            f.write(f"\nVoting End Time: {end_time}")
-                            f.write(f"\nVoted: {voted}\n")
-                            print(f"\nProposal ID: {proposal_id}")
-                            print(f"Title: {title}")
-                            print(f"Voting Start Time: {start_time}")
-                            print(f"Voting End Time: {end_time}")
-                            print(f"Voted: {voted}\n")
-                            send_telegram_message(
-                                f"\nПроект: {project_info['project_name']}\nProposal ID: {proposal_id}\nTitle: {title}\nVoting Start Time: {start_time}\nVoting End Time: {end_time}\nVoted: {voted}\n")
-                break
-        if not project_votes_found:
-            print(f"{project_info['project_name']}: Новые голоса не найдены.")
+                    for proposal in active_proposals:
+                        proposal_id = proposal.get('id', proposal.get('proposal_id', 'No ID available'))
+                        title = proposal.get('title', 'No title available') if api_version == 'v1' else proposal['content'].get('title', 'No title available')
 
+                        vote_url = f'{project_api}/cosmos/gov/{api_version}/proposals/{proposal_id}/votes/{project_wallet}'
+                        vote_response = requests.get(vote_url)
+                        voted = "Yes" if vote_response.status_code == 200 else "No"
+                        
+                        try:
+                            start_time = isoparse(proposal.get('voting_start_time')).strftime('%d %B %Y, %H:%M') if proposal.get('voting_start_time') else 'No start time'
+                            end_time = isoparse(proposal.get('voting_end_time')).strftime('%d %B %Y, %H:%M') if proposal.get('voting_end_time') else 'No end time'
+                        except Exception as e:
+                            print(f"Ошибка при парсинге дат: {e}")
+                            start_time = 'Ошибка даты'
+                            end_time = 'Ошибка даты'
+
+                        message = (
+                            f"\nПроект: {project_info['project_name']}\n"
+                            f"Network Type: {network_type}\n"
+                            f"Proposal ID: {proposal_id}\n"
+                            f"Title: {title}\n"
+                            f"Voting Start Time: {start_time}\n"
+                            f"Voting End Time: {end_time}\n"
+                            f"Voted: {voted}\n"
+                        )
+                        send_telegram_message(message, voted, network_type)
+                if not project_votes_found:
+                    print(f"{project_info['project_name']}: Новые голоса не найдены.")
+            else:
+                print(f"Ошибка запроса API для {project_info['project_name']} с кодом ответа {response.status_code}")
 
 def schedule_checks():
     global interval
@@ -97,7 +99,6 @@ def schedule_checks():
         else:
             print("Введен неверный вариант. Пожалуйста, попробуйте еще раз.")
 
-
 def start_auto_check_votes():
     global next_check_time
     if not interval:
@@ -108,8 +109,13 @@ def start_auto_check_votes():
     print("Теперь вы можете безопасно закрыть вашу сессию экрана.")
     print("Чтобы отсоединиться от сессии экрана, нажмите Ctrl + A, затем D.")
     print("Чтобы повторно подключиться к сессии экрана, введите 'screen -r' в терминале.")
+
+    next_check_time = datetime.datetime.now() + interval
+
     while True:
-        if next_check_time and datetime.datetime.now() >= next_check_time:
+        current_time = datetime.datetime.now()
+        if current_time >= next_check_time:
             print(f"\nНачало проверки голосов... Следующая проверка через: {interval}")
             check_active_votes()
-        time.sleep(1)
+            next_check_time = current_time + interval
+        time.sleep(120)  # Сон на 60 секунд для снижения нагрузки

@@ -5,11 +5,13 @@ def add_project_info():
     project_name = input("Введите название проекта: ")
     project_api = input("Введите API проекта: ")
     wallet_address = input("Введите адрес кошелька для этого проекта: ")
+    network_type = input("Это mainnet или testnet? (mainnet/testnet): ")
 
     project_info = {
         'project_name': project_name,
         'project_api': project_api,
         'wallet_address': wallet_address,
+        'network_type': network_type
     }
 
     projects = []
