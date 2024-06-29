@@ -12,6 +12,7 @@ from api_test import test_api_connection
 next_check_time = None
 interval = None
 
+
 def check_active_votes():
     global next_check_time, interval
     if interval:
@@ -24,53 +25,96 @@ def check_active_votes():
     with open('projectsinfo.txt', 'r') as file:
         projects = json.load(file)
 
-    for project_info in projects:
-        project_api = project_info['project_api']
-        project_wallet = project_info['wallet_address']
-        network_type = project_info['network_type']
+    mainnet_messages = []  # Список для хранения сообщений по проектам mainnet
+    testnet_messages = []  # Список для хранения сообщений по проектам testnet
+    seen_proposals = set()  # Множество для отслеживания уникальных предложений
 
-        project_votes_found = False
+    for project_info in projects:
+        project_api = project_info.get('project_api')
+        project_wallet = project_info.get('wallet_address')
+        network_type = project_info.get('network_type')
+
         for api_version in ['v1beta1', 'v1']:
             url = f'{project_api}/cosmos/gov/{api_version}/proposals?pagination.limit=600'
-            response = requests.get(url)
+            try:
+                response = requests.get(url, timeout=3)  # Ограничиваем время ожидания до 3 секунд
+                response.raise_for_status()
+            except requests.exceptions.Timeout:
+                print(f"Превышено время ожидания для {project_info['project_name']}. Переход к следующему проекту.")
+                break
+            except requests.exceptions.RequestException as e:
+                print(f"Ошибка запроса API для {project_info['project_name']}: {str(e)}")
+                continue
+
             if response.status_code == 200:
                 proposals = response.json().get('proposals', [])
                 if proposals:
                     active_proposals = [p for p in proposals if p.get('status') == "PROPOSAL_STATUS_VOTING_PERIOD"]
-                    if not active_proposals:
-                        continue
-                    print(f"\nАктивные голоса для {project_info['project_name']}:\n")
-                    project_votes_found = True
-                    for proposal in active_proposals:
-                        proposal_id = proposal.get('id', proposal.get('proposal_id', 'No ID available'))
-                        title = proposal.get('title', 'No title available') if api_version == 'v1' else proposal['content'].get('title', 'No title available')
+                    if active_proposals:
+                        print(f"\nАктивные голоса для {project_info['project_name']}:\n")
+                        project_votes_found = True
+                        for proposal in active_proposals:
+                            proposal_id = proposal.get('id', proposal.get('proposal_id', 'No ID available'))
 
-                        vote_url = f'{project_api}/cosmos/gov/{api_version}/proposals/{proposal_id}/votes/{project_wallet}'
-                        vote_response = requests.get(vote_url)
-                        voted = "Yes" if vote_response.status_code == 200 else "No"
-                        
-                        try:
-                            start_time = isoparse(proposal.get('voting_start_time')).strftime('%d %B %Y, %H:%M') if proposal.get('voting_start_time') else 'No start time'
-                            end_time = isoparse(proposal.get('voting_end_time')).strftime('%d %B %Y, %H:%M') if proposal.get('voting_end_time') else 'No end time'
-                        except Exception as e:
-                            print(f"Ошибка при парсинге дат: {e}")
-                            start_time = 'Ошибка даты'
-                            end_time = 'Ошибка даты'
+                            # Проверяем, было ли уже такое предложение обработано
+                            if proposal_id in seen_proposals:
+                                continue
+                            seen_proposals.add(proposal_id)
 
-                        message = (
-                            f"\nПроект: {project_info['project_name']}\n"
-                            f"Network Type: {network_type}\n"
-                            f"Proposal ID: {proposal_id}\n"
-                            f"Title: {title}\n"
-                            f"Voting Start Time: {start_time}\n"
-                            f"Voting End Time: {end_time}\n"
-                            f"Voted: {voted}\n"
-                        )
-                        send_telegram_message(message, voted, network_type)
-                if not project_votes_found:
-                    print(f"{project_info['project_name']}: Новые голоса не найдены.")
+                            # Извлекаем заголовок из content.title или description в зависимости от версии API
+                            if api_version == 'v1beta1':
+                                title = proposal['content'].get('title', 'No title available')
+                            elif api_version == 'v1':
+                                title = proposal.get('title', 'No title available')
+
+                            try:
+                                start_time = isoparse(proposal.get('voting_start_time')).strftime(
+                                    '%d %B %Y, %H:%M') if proposal.get('voting_start_time') else 'No start time'
+                                end_time = isoparse(proposal.get('voting_end_time')).strftime(
+                                    '%d %B %Y, %H:%M') if proposal.get('voting_end_time') else 'No end time'
+                            except Exception as e:
+                                print(f"Ошибка при парсинге дат: {e}")
+                                start_time = 'Ошибка даты'
+                                end_time = 'Ошибка даты'
+
+                            # Проверяем, был ли голосован за предложение
+                            vote_url = f'{project_api}/cosmos/gov/{api_version}/proposals/{proposal_id}/votes/{project_wallet}'
+                            vote_response = requests.get(vote_url)
+                            voted = "Yes" if vote_response.status_code == 200 else "No"
+
+                            # Выбираем эмодзи в зависимости от статуса голосования
+                            vote_emoji = "🟢" if voted == "Yes" else "🔴"
+
+                            message = (
+                                f"{vote_emoji} 🌐 {project_info['project_name']}\n"
+                                f"⚖️ Network: {network_type}\n"
+                                f"📜 Proposal ID: {proposal_id}\n"
+                                f"📃 Title: {title}\n"
+                                f"⏰ Voting Start: {start_time}\n"
+                                f"⏳ Voting End: {end_time}\n"
+                                f"🗳️ Voted: {voted}"
+                            )
+
+                            if network_type == 'mainnet':
+                                mainnet_messages.append(message)
+                            elif network_type == 'testnet':
+                                testnet_messages.append(message)
+
+                    else:
+                        print(f"{project_info['project_name']}: Нет активных голосов.")
+                else:
+                    print(f"{project_info['project_name']}: Нет предложений.")
             else:
                 print(f"Ошибка запроса API для {project_info['project_name']} с кодом ответа {response.status_code}")
+
+    # Отправляем сообщения после проверки всех проектов
+    if mainnet_messages:
+        combined_mainnet_message = "\n\n".join(mainnet_messages)
+        send_telegram_message(combined_mainnet_message, 'mainnet')
+
+    if testnet_messages:
+        combined_testnet_message = "\n\n".join(testnet_messages)
+        send_telegram_message(combined_testnet_message, 'testnet')
 
 def schedule_checks():
     global interval

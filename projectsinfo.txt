@@ -36,12 +36,6 @@
         "network_type": "mainnet"
     },
     {
-        "project_name": "LAMBDA",
-        "project_api": "https://rest.cosmos.directory/lambda",
-        "wallet_address": "lamb1jwuypnpg2m5rxpr2jl9teqcwerk534x39aj8sy",
-        "network_type": "mainnet"
-    },
-    {
         "project_name": "QUICKSILVER",
         "project_api": "https://quick.api.m.stavr.tech",
         "wallet_address": "quick17gwfcceyvcw53r6cclrhwk5jksmtd96xhlqwk9",
@@ -97,7 +91,7 @@
     },
     {
         "project_name": "HUMANSAI",
-        "project_api": "https://api.humans.nodestake.top",
+        "project_api": "http://94.237.93.65:1317",
         "wallet_address": "human1xl4lxgvwesnehdkfpn92ku8fk99lkrk66gghwz",
         "network_type": "mainnet"
     },
@@ -150,12 +144,6 @@
         "network_type": "testnet"
     },
     {
-        "project_name": "SELFCHAIN",
-        "project_api": "https://selfchain.api.t.stavr.tech",
-        "wallet_address": "self1z9vc5hrsy3c8ahwys0yegqld3w8g7uyt9ks6nh",
-        "network_type": "testnet"
-    },
-    {
         "project_name": "SOURCE",
         "project_api": "https://source-mainnet-api.itrocket.net:443",
         "wallet_address": "source145sxudkktspu4lwlyfg7k63nnceaqfxq4yn86a",
@@ -181,7 +169,7 @@
     },
     {
         "project_name": "BERA",
-        "project_api": "https://berachain-testnet-api.synergynodes.com",
+        "project_api": "https://berachain-testnet-api.polkachu.com",
         "wallet_address": "bera1eclrktqt5p4waytt7u2826welyvtar29zfzrrx",
         "network_type": "testnet"
     },
@@ -204,157 +192,139 @@
         "network_type": "testnet"
     },
     {
-        "project_name": "Archway",
+        "project_name": "ARCHWAY",
         "project_api": "https://archway-api.noders.services/",
         "wallet_address": "archway173zlk665f6f4hl8rnmelhql9qkttc2e79xay7n",
         "network_type": "mainnet"
     },
     {
-        "project_name": "Side",
+        "project_name": "SIDE",
         "project_api": "https://side-t-api.noders.services/",
         "wallet_address": "bc1qjwjyyk6q8ujz9x99082ahxlekt5nrfu4a2pk5w",
         "network_type": "testnet"
     },
     {
-        "project_name": "Airchain",
+        "project_name": "AIRCHAINS",
         "project_api": "https://airchains-test-api.nodesrun.xyz/",
         "wallet_address": "air15n0pesc7ggllax6medkfv6pqjszpc40ql4xyew",
         "network_type": "testnet"
     },
     {
-        "project_name": "Hedge",
+        "project_name": "HEDGE",
         "project_api": "https://hedge-api.validator247.com/",
         "wallet_address": "hedge1gk90l5dlkjw44xydu40hkr4hynhrkh9j38z008",
         "network_type": "testnet"
     },
     {
-        "project_name": "Mantra",
+        "project_name": "MANTRA",
         "project_api": "https://testnet.mantra.api.liveraven.net/",
         "wallet_address": "mantra1aysxyetv0y7sfe0v70akyjn3kkjc6qytsk7hzc",
         "network_type": "testnet"
     },
     {
-        "project_name": "Seda",
+        "project_name": "SEDA",
         "project_api": "https://seda-t-api.noders.services/",
         "wallet_address": "seda1ws3x9g0e7sx7zaxvtmtjmrdz2fgttr0xlgqtku",
         "network_type": "testnet"
     },
     {
-        "project_name": "Band",
+        "project_name": "BAND",
         "project_api": "https://band-t-api.noders.services/",
         "wallet_address": "band1wy08smy5xpwrm3xju7z9usnat90vvp394agadu",
         "network_type": "testnet"
     },
     {
-        "project_name": "Zeta",
+        "project_name": "ZETA",
         "project_api": "https://zetachain-t-api.noders.services/",
         "wallet_address": "zeta1fxshejs06h9446g9dwavx9knlnsf3tkj4yd4xu",
         "network_type": "testnet"
     },
     {
-        "project_name": "Warden",
-        "project_api": "warden1ucm0wa7g029xvlt9yffz5kqj2zw40qyuemacef",
+        "project_name": "WARDEN",
+        "project_api": "http://185.185.80.16:1317",
         "wallet_address": "warden1ucm0wa7g029xvlt9yffz5kqj2zw40qyuemacef",
         "network_type": "testnet"
     },
     {
-        "project_name": "Union",
-        "project_api": "API: https://api-union-testnet-01.stakeflow.io",
+        "project_name": "UNION",
+        "project_api": "http://198.244.215.141:20317",
         "wallet_address": "union1qk3g5r2spp9t3a28ek0ken6k62rwyyxa45e2gc",
         "network_type": "testnet"
     },
     {
-        "project_name": "Umee",
+        "project_name": "UMEE",
         "project_api": "https://api-umee-testnet-01.stakeflow.io",
         "wallet_address": "umee1xh00vlff0vnf96ppnj47r3tn6dgw3yzfmwc0fj",
         "network_type": "testnet"
     },
     {
-        "project_name": "Swisstronik",
+        "project_name": "SWISSTRONIK",
         "project_api": "https://swisstronik-t-api.noders.services/",
         "wallet_address": "swtr1jxptedfkfa0dea7zdu238290xxhm2nk6csyg8k",
         "network_type": "testnet"
     },
     {
-        "project_name": "Router",
+        "project_name": "ROUTER",
         "project_api": "https://router-t-api.noders.services/",
         "wallet_address": "router1fa8vxy29r3uuex3m3zp8taw7j37006npl9geek",
         "network_type": "testnet"
     },
     {
-        "project_name": "Quicksilver",
-        "project_api": "https://quicksilver-t-api.noders.services/",
+        "project_name": "QUICKSILVER",
+        "project_api": "http://190.2.146.152:2817",
         "wallet_address": "quick17gwfcceyvcw53r6cclrhwk5jksmtd96xhlqwk9",
         "network_type": "testnet"
     },
     {
-        "project_name": "Okp4",
-        "project_api": "https://api-t.okp4.nodestake.org/",
-        "wallet_address": "okp41g58cwnmtxsm25ehaqurrz9y6avk8qc0gnzhg6f",
-        "network_type": "testnet"
-    },
-    {
-        "project_name": "Lava",
+        "project_name": "LAVA",
         "project_api": "https://lava-testnet.api.kjnodes.com/",
         "wallet_address": "lava@1tkhehvca5uur6svd2l83lp704mlhc7xu9rcdqz",
         "network_type": "testnet"
     },
     {
-        "project_name": "Jackal",
-        "project_api": "https://jackal-t-api.noders.services/",
+        "project_name": "JACKAL",
+        "project_api": "https://jackal-testnet-api.polkachu.com",
         "wallet_address": "jkl132k95jan8ju92jtmkzr49vnusv5xvwvjfe7lee",
         "network_type": "testnet"
     },
     {
-        "project_name": "Humans",
+        "project_name": "HUMANS",
         "project_api": "https://humans-testnet-api.itrocket.net/",
         "wallet_address": "human1dsa6eeaqyaq9utwh69ccmc6vre9lvp28327w8n",
         "network_type": "testnet"
     },
     {
-        "project_name": "Entrypoint",
+        "project_name": "ENTRYPOINT",
         "project_api": "https://entrypoint-testnet-api.itrocket.net",
         "wallet_address": "entrypoint1qadn0mcaf4sk02c44zfkkknkn2k3dys73pmw8d",
         "network_type": "testnet"
     },
     {
-        "project_name": "Dymension",
+        "project_name": "DYMENSION",
         "project_api": "https://dymension-testnet.api.kjnodes.com/",
         "wallet_address": "dym14jmx7s72krq87a8z5065vc0c2sgxtdnm3ydrr0",
         "network_type": "testnet"
     },
     {
-        "project_name": "Cardchain",
+        "project_name": "CARDCHAIN",
         "project_api": "https://cardchain-testnet-api.itrocket.net/",
         "wallet_address": "cc1d8xlprsr30l6uzctkwnx0k7hygdrx9x9mlzqdw",
         "network_type": "testnet"
     },
     {
-        "project_name": "Crossfi",
+        "project_name": "CROSSFI",
         "project_api": "https://crossfi-t-api.noders.services/",
         "wallet_address": "mx1jep3dc0aysyzcj78mer6zps5jftm89s2af6hly",
         "network_type": "testnet"
     },
     {
-        "project_name": "Celestia",
+        "project_name": "CELESTIA",
         "project_api": "https://api-t.celestia.nodestake.org",
         "wallet_address": "celestia1zzxrq7tjlsqvv0jtqtlt8gjaa68racukvt3us3",
         "network_type": "testnet"
     },
     {
-        "project_name": "Alignedlayer",
-        "project_api": "https://alignedlayer-testnet-api.itrocket.net/",
-        "wallet_address": "aligned1fu5vtujxarn3wuhhuqkz2dwd46feshdvztnxuf",
-        "network_type": "testnet"
-    },
-    {
-        "project_name": "Andromeda",
-        "project_api": "https://api-t.andromeda.nodestake.top",
-        "wallet_address": "andr1t8zsecgzc5025k3s0mthdm6vt82p5p0vuphum7",
-        "network_type": "mainnet"
-    },
-    {
-        "project_name": "Seda",
+        "project_name": "SEDA",
         "project_api": "https://seda-api.noders.services/",
         "wallet_address": "seda1ur9sw064p8zs793cn20y6qapaz4rsccmny57pa",
         "network_type": "mainnet"
