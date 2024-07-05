@@ -52,7 +52,6 @@ def check_active_votes():
                         active_proposals = [p for p in proposals if p.get('status') == "PROPOSAL_STATUS_VOTING_PERIOD"]
                         if active_proposals:
                             print(f"\nАктивные голоса для {project_info['project_name']}:\n")
-                            project_votes_found = True
                             for proposal in active_proposals:
                                 proposal_id = proposal.get('id', proposal.get('proposal_id', 'No ID available'))
 
@@ -60,7 +59,12 @@ def check_active_votes():
                                     continue
                                 seen_proposals.add(proposal_id)
 
-                                title = proposal['content'].get('title', 'No title available') if api_version == 'v1beta1' else proposal.get('title', 'No title available')
+                                title = proposal['content'].get('title', '') if api_version == 'v1beta1' else proposal.get('title', '')
+
+                                # Проверка наличия заголовка
+                                if not title:
+                                    print(f"Предложение {proposal_id} не содержит заголовка. Пропуск.")
+                                    continue
 
                                 try:
                                     start_time = isoparse(proposal.get('voting_start_time')).strftime('%d %B %Y, %H:%M') if proposal.get('voting_start_time') else 'No start time'
@@ -72,9 +76,20 @@ def check_active_votes():
 
                                 vote_url = f'{project_api}/cosmos/gov/{api_version}/proposals/{proposal_id}/votes/{project_wallet}'
                                 vote_response = requests.get(vote_url)
-                                voted = "Yes" if vote_response.status_code == 200 else "No"
+                                if vote_response.status_code == 200:
+                                    vote_data = vote_response.json()
+                                    option = vote_data['vote']['options'][0]['option']
+                                    voted = {
+                                        "VOTE_OPTION_YES": "Voted Yes",
+                                        "VOTE_OPTION_ABSTAIN": "Voted Abstain",
+                                        "VOTE_OPTION_NO": "Voted No",
+                                        "VOTE_OPTION_NO_WITH_VETO": "Voted NoWithVeto"
+                                    }.get(option, "Not yet")
+                                else:
+                                    voted = "Not yet"
 
-                                vote_emoji = "🟢" if voted == "Yes" else "🔴"
+                                # Логика изменения цвета кружка
+                                vote_emoji = "🟢" if voted != "Not yet" else "🔴"
 
                                 message = (
                                     f"{vote_emoji} 🌐 {project_info['project_name']}\n"
