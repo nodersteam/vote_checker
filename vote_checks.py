@@ -80,10 +80,10 @@ def check_active_votes():
                                     vote_data = vote_response.json()
                                     option = vote_data['vote']['options'][0]['option']
                                     voted = {
-                                        "VOTE_OPTION_YES": "Yes / Option 1",
-                                        "VOTE_OPTION_ABSTAIN": "Abstain / Option 2",
-                                        "VOTE_OPTION_NO": "No / Option 3",
-                                        "VOTE_OPTION_NO_WITH_VETO": "NoWithVeto / Option 4"
+                                        "VOTE_OPTION_YES": "Yes",
+                                        "VOTE_OPTION_ABSTAIN": "Abstain",
+                                        "VOTE_OPTION_NO": "No",
+                                        "VOTE_OPTION_NO_WITH_VETO": "No with veto"
                                     }.get(option, "Not yet")
                                 else:
                                     voted = "Not yet"
@@ -98,7 +98,7 @@ def check_active_votes():
                                     f"📃 Title: {title}\n"
                                     f"⏰ Voting Start: {start_time}\n"
                                     f"⏳ Voting End: {end_time}\n"
-                                    f"🗳️ Voted: {voted}"
+                                    f"🗳️ Voted option: {voted}"
                                 )
 
                                 if network_type == 'mainnet':
