@@ -1,5 +1,7 @@
 import os
 import json
+from tabulate import tabulate
+
 
 def add_project_info():
     project_name = input("Введите название проекта: ")
@@ -26,6 +28,7 @@ def add_project_info():
 
     print("Информация о проекте успешно добавлена.")
 
+
 def view_project_info():
     if not os.path.isfile('projectsinfo.txt'):
         print("Файл 'projectsinfo.txt' не существует.")
@@ -38,12 +41,15 @@ def view_project_info():
         print("Информация о проектах отсутствует.")
         return
 
-    print("Информация о проектах:\n")
+    headers = ["№", "Название проекта", "API", "Адрес кошелька", "Тип сети"]
+    table = []
+
     for idx, project_info in enumerate(projects, 1):
-        print(f"{idx}.")
-        print(f"Название проекта: {project_info['project_name']}")
-        print(f"API проекта: {project_info['project_api']}")
-        print(f"Адрес кошелька: {project_info['wallet_address']}\n")
+        table.append([idx, project_info['project_name'], project_info['project_api'], project_info['wallet_address'],
+                      project_info['network_type']])
+
+    print(tabulate(table, headers, tablefmt="grid"))
+
 
 def edit_project_info():
     if not os.path.isfile('projectsinfo.txt'):
@@ -69,11 +75,13 @@ def edit_project_info():
         project_name = input(f"Введите новое название проекта (текущее: {projects[project_idx]['project_name']}): ")
         project_api = input(f"Введите новый API проекта (текущий: {projects[project_idx]['project_api']}): ")
         wallet_address = input(f"Введите новый адрес кошелька (текущий: {projects[project_idx]['wallet_address']}): ")
+        network_type = input(f"Введите тип сети (текущий: {projects[project_idx]['network_type']}): ")
 
         projects[project_idx] = {
             'project_name': project_name,
             'project_api': project_api,
             'wallet_address': wallet_address,
+            'network_type': network_type
         }
 
         with open('projectsinfo.txt', 'w') as file:
@@ -95,21 +103,7 @@ def delete_project_info():
         print("Информация о проектах отсутствует.")
         return
 
-    max_idx_length = len(str(len(projects)))
-    header_format = "{:<{width}} {:<20} {:<30} {:<15}"
-    row_format = "{:<{width}} {:<20} {:<30} {:<15}"
-
-    print("Список проектов:")
-    print(header_format.format("№", "Название проекта", "API", "Адрес кошелька", width=max_idx_length))
-    print("-" * (max_idx_length + 70))  # Линия для разделения заголовка и данных
-
-    for idx, project in enumerate(projects, start=1):
-        project_name = project.get('project_name', 'Неизвестное название')
-        project_api = project.get('project_api', 'Нет данных')
-        wallet_address = project.get('wallet_address', 'Нет данных')
-
-        # Выводим каждый проект с заданными ширинами для каждого столбца
-        print(row_format.format(idx, project_name, project_api, wallet_address, width=max_idx_length))
+    view_project_info()
 
     while True:
         project_idx = input("Введите номер проекта, который вы хотите удалить (или 'q' для выхода): ")
@@ -130,3 +124,29 @@ def delete_project_info():
         project_name = del_project.get('project_name', 'Неизвестное название')
         print(f"Проект '{project_name}' успешно удален.")
         break
+
+
+# Пример использования функций
+if __name__ == "__main__":
+    while True:
+        print("\nМеню:")
+        print("1. Добавить информацию о проекте")
+        print("2. Просмотреть информацию о проектах")
+        print("3. Редактировать информацию о проекте")
+        print("4. Удалить информацию о проекте")
+        print("5. Выйти")
+
+        choice = input("Выберите действие: ")
+
+        if choice == '1':
+            add_project_info()
+        elif choice == '2':
+            view_project_info()
+        elif choice == '3':
+            edit_project_info()
+        elif choice == '4':
+            delete_project_info()
+        elif choice == '5':
+            break
+        else:
+            print("Неверный выбор. Пожалуйста, попробуйте снова.")
